@@ -5,8 +5,6 @@ from app import app
 from app.forms import MessageForm
 from app.models import User, Messages
 
-#initialize database
-db.create_all()
 
 # add route '/' and also add the two methods to handle request: 'GET' and 'POST'
 @app.route('/', methods=['GET','POST'])
@@ -16,21 +14,27 @@ def home():
 	if form.validate_on_submit():
 		author = User.query.filter_by(author=form.author.data).first()
         # check if user exits in database
+	# if not create user and add to database
+	# create row in Message table with user (created/found) add to the database
 		if author is None :
 			print('User not in data base')
+			# add a new User into the database
 			db.session.add(User(author=form.author.data))
 			db.session.commit()
+			# add a new message to the database which connected by the user's id
 			db.session.add(Messages(message=form.message.data, user_id = User.query.filter_by(author=form.author.data).first().id))
 			db.session.commit()
-			print('added user')
+			print('added new user')
+		# if the user already exist in the data base, create a new message and connected with the user's id
 		else:
 			db.session.add(Messages(message=form.message.data, user_id = User.query.filter_by(author=form.author.data).first().id))
 			db.session.commit()
 			print('added message')
-        # if not create user and add to database
-        # create row in Message table with user (created/found) add to ta database
-	
+
+	# create a new posts dictionary
 	posts = []
+	# for every message in the Messages collection, create a new dictionary with the author and message
+	# then appended it to the posts dictionary.
 	for m in Messages.query:
 		test_m = {}
 		test_m['author'] = m.author
@@ -40,10 +44,9 @@ def home():
 
     # output all messages
     # create a list of dictionaries with the following structure
-#	posts =  [{'author':'carlos', 'message':'Yo! Where you at?!'}, {'author':'Jerry', 'message':'Home. You?'}]
+	#posts =  [{'author':'carlos', 'message':'Yo! Where you at?!'}, {'author':'Jerry', 'message':'Home. You?'}]
+
 
 	return render_template('home.html', posts=posts, form=form)
 
-
-#def messagePost():
 
