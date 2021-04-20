@@ -9,7 +9,13 @@ from app.models import User, Messages
 # add route '/' and also add the two methods to handle request: 'GET' and 'POST'
 @app.route('/', methods=['GET','POST'])
 def home():
+	'''
+	Home page
 
+	Display the homepage of a chat app, where you can enter an author and a message.
+	The page will reload when you press Send, and display the updated dialogue.
+
+	'''
 	form = MessageForm()
 	if form.validate_on_submit():
 		author = User.query.filter_by(author=form.author.data).first()
@@ -36,10 +42,10 @@ def home():
 	# for every message in the Messages collection, create a new dictionary with the author and message
 	# then appended it to the posts dictionary.
 	for m in Messages.query:
-		test_m = {}
-		test_m['author'] = m.author
-		test_m['message'] = m.message
-		posts.append(test_m)
+		new_m = {}
+		new_m['author'] = m.author
+		new_m['message'] = m.message
+		posts.append(new_m)
 
 
     # output all messages
